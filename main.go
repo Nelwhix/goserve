@@ -3,12 +3,12 @@ package main
 import (
 	"flag"
 	"fmt"
-	"os"
-	"strconv"
-	"time"
-	"syscall"
 	"net/http"
+	"os"
 	"os/signal"
+	"strconv"
+	"syscall"
+	"time"
 )
 
 func main() {
@@ -33,7 +33,7 @@ func main() {
 	
 	for {
 		select {
-		case rec := <-sig:
+		case _ = <-sig:
 			signal.Stop(sig)
 			fmt.Println("Gracefully shutting down..")
 		case err := <-errCh:
@@ -59,5 +59,5 @@ func serve(port int64, errChan chan error) {
 		errChan <- err
 		return
 	}
-	fmt.Printf("Server starting on port: %v", port)
+	fmt.Fprintf(os.Stdout, "Server starting on port: %v", port)
 }
