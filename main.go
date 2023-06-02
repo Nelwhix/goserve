@@ -20,24 +20,26 @@ func main() {
 		flag.PrintDefaults()
 	}
 
-	port := flag.Int64("port", 3000, "Port to start server on")
+	port := flag.Int64("p", 3000, "Port to start server on")
 	flag.Parse()
 
 	sig := make(chan os.Signal, 1)
 	errCh := make(chan error)
 	signal.Notify(sig, syscall.SIGINT)
 
+	fmt.Fprintf(os.Stdout, "Server starting on port: %v \n", *port)
 	go func() {
 		serve(*port, errCh)
 	}()
 	
 	for {
 		select {
-		case _ = <-sig:
+		case <-sig:
 			signal.Stop(sig)
 			fmt.Println("Gracefully shutting down..")
+			os.Exit(1)
 		case err := <-errCh:
-			fmt.Errorf("Error: %w", err)
+			fmt.Printf("Error: %v", err)
 			os.Exit(1)
 		}
 	}
@@ -59,5 +61,4 @@ func serve(port int64, errChan chan error) {
 		errChan <- err
 		return
 	}
-	fmt.Fprintf(os.Stdout, "Server starting on port: %v", port)
 }
