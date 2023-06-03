@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"flag"
 	"fmt"
 	"net/http"
@@ -15,7 +16,7 @@ func main() {
 	flag.Usage = func () {
 		fmt.Fprintf(flag.CommandLine.Output(), 
 		"Serve - Static file serving and directory listing \n")
-		fmt.Fprintf(flag.CommandLine.Output(), "Copyright " + strconv.Itoa(time.Now().Local().Year()) + "\n")
+		fmt.Fprintf(flag.CommandLine.Output(), "Copyright " + strconv.Itoa(time.Now().Year()) + "\n")
 		fmt.Fprintln(flag.CommandLine.Output(), "Usage Information:")
 		flag.PrintDefaults()
 	}
@@ -39,8 +40,7 @@ func main() {
 			fmt.Println("Gracefully shutting down..")
 			os.Exit(1)
 		case err := <-errCh:
-			fmt.Printf("Error: %v", err)
-			os.Exit(1)
+			log.Fatalf("Error starting server: %v", err)
 		}
 	}
 }
