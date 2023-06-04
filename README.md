@@ -16,5 +16,8 @@ The cli was built with go 1.20.4
 
     // To use a custom port run
     serve -p 5173
+
+    // To serve another folder
+    serve -root "path-to-folder"
 ```
 

@@ -12,7 +12,10 @@ import (
 	"time"
 
 	"github.com/fatih/color"
+	"github.com/fsnotify/fsnotify"
 )
+
+var root *string
 
 func main() {
 	flag.Usage = func () {
@@ -23,6 +26,7 @@ func main() {
 		flag.PrintDefaults()
 	}
 
+	root = flag.String("root", ".", "Root Directory to serve")
 	port := flag.Int64("p", 3000, "Port to start server on")
 	flag.Parse()
 
@@ -67,8 +71,16 @@ func serveFile(w http.ResponseWriter, r *http.Request) {
 		os.Exit(1)
 	}
 
-	fs := http.FileServer(http.Dir(wd))
+	var fs http.Handler
 
+	if (*root == ".") {
+		fs = http.FileServer(http.Dir(wd))
+	} else {
+		fs = http.FileServer(http.Dir(*root))
+	}
+
+	fs.ServeHTTP(w, r)
+	// startWatcher(r)
 }
 
 func logRequest(r *http.Request) {
@@ -76,4 +88,46 @@ func logRequest(r *http.Request) {
 	date := fmt.Sprintf("%s/%s/%s", strconv.Itoa(now.Day()), now.Month(), strconv.Itoa(now.Year()))
 	time := fmt.Sprintf("%s:%s:%s", strconv.Itoa(now.Hour()), strconv.Itoa(now.Minute()), strconv.Itoa(now.Second()))
 	fmt.Fprintf(os.Stdout, "%s\t%s\t%s\t%s\t%s\t%s\n", r.Proto, date, time, r.Host, r.Method, r.RequestURI)
+}
+
+func startWatcher(r *http.Request) {
+	watcher, err := fsnotify.NewWatcher()
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer watcher.Close()
+
+	go func() {
+		for {
+			select {
+			case event, ok := <-watcher.Events:
+				if !ok {
+					return 
+				}
+				fmt.Fprintf(os.Stdout, "event:%s", event)
+		
+				if event.Has(fsnotify.Write) {
+					fmt.Fprintf(os.Stdout, "modified file: %s", event.Name)
+				}
+			case err, ok := <-watcher.Errors:
+				if !ok {
+					return
+				}
+				log.Println("error:", err)
+			}
+		}
+	}()
+
+	if (*root == ".") {
+		wd, _  := os.Getwd()
+		err = watcher.Add(wd)
+	} else {
+		err = watcher.Add(*root)
+	}
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	<-make(chan struct{})
 }
