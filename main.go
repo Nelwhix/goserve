@@ -53,7 +53,7 @@ func main() {
 }
 
 func serve(port int64, errChan chan error) {
-	startWatcher()
+	go startWatcher()
 	http.HandleFunc("/", serveFile)
 	err := http.ListenAndServe(":" + strconv.FormatInt(port, 10), nil)
 	if err != nil {
@@ -74,6 +74,7 @@ func serveFile(w http.ResponseWriter, r *http.Request) {
 
 	var fs http.Handler
 
+	// TODO: CREATE OUR OWN FILESERVER METHOD
 	if (*root == ".") {
 		fs = http.FileServer(http.Dir(wd))
 	} else {
