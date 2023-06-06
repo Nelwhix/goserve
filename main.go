@@ -53,6 +53,7 @@ func main() {
 }
 
 func serve(port int64, errChan chan error) {
+	startWatcher()
 	http.HandleFunc("/", serveFile)
 	err := http.ListenAndServe(":" + strconv.FormatInt(port, 10), nil)
 	if err != nil {
@@ -80,7 +81,6 @@ func serveFile(w http.ResponseWriter, r *http.Request) {
 	}
 
 	fs.ServeHTTP(w, r)
-	startWatcher(r)
 }
 
 func logRequest(r *http.Request) {
@@ -90,7 +90,7 @@ func logRequest(r *http.Request) {
 	fmt.Fprintf(os.Stdout, "%s\t%s\t%s\t%s\t%s\t%s\n", r.Proto, date, time, r.Host, r.Method, r.RequestURI)
 }
 
-func startWatcher(r *http.Request) {
+func startWatcher() {
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
 		log.Fatal(err)
