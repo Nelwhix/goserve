@@ -80,7 +80,7 @@ func serveFile(w http.ResponseWriter, r *http.Request) {
 	}
 
 	fs.ServeHTTP(w, r)
-	// startWatcher(r)
+	startWatcher(r)
 }
 
 func logRequest(r *http.Request) {
