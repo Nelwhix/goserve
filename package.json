@@ -1,6 +1,6 @@
 {
-  "name": "serve",
-  "version": "1.1.0",
+  "name": "launch",
+  "version": "1.1.1",
   "description": "Golang CLI for starting blazing fast server for your local sites",
   "main": "index.js",
   "scripts": {
