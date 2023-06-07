@@ -1,9 +1,9 @@
 package main
 
 import (
-	"log"
 	"flag"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"os/signal"
@@ -16,6 +16,7 @@ import (
 )
 
 var root *string
+var eventCh = make(chan string)
 
 func main() {
 	flag.Usage = func () {
@@ -54,7 +55,9 @@ func main() {
 
 func serve(port int64, errChan chan error) {
 	go startWatcher()
+	http.HandleFunc("/events", streamEvents)
 	http.HandleFunc("/", serveFile)
+	
 	err := http.ListenAndServe(":" + strconv.FormatInt(port, 10), nil)
 	if err != nil {
 		errChan <- err
@@ -74,13 +77,12 @@ func serveFile(w http.ResponseWriter, r *http.Request) {
 
 	var fs http.Handler
 
-	// TODO: CREATE OUR OWN FILESERVER METHOD
 	if (*root == ".") {
 		fs = http.FileServer(http.Dir(wd))
 	} else {
 		fs = http.FileServer(http.Dir(*root))
 	}
-
+ 
 	fs.ServeHTTP(w, r)
 }
 
@@ -105,10 +107,9 @@ func startWatcher() {
 				if !ok {
 					return 
 				}
-				fmt.Fprintf(os.Stdout, "event:%s", event)
-		
+
 				if event.Has(fsnotify.Write) {
-					fmt.Fprintf(os.Stdout, "modified file: %s", event.Name)
+					eventCh <-"reload"
 				}
 			case err, ok := <-watcher.Errors:
 				if !ok {
@@ -131,4 +132,33 @@ func startWatcher() {
 	}
 
 	<-make(chan struct{})
+}
+
+func streamEvents(w http.ResponseWriter, r *http.Request) {
+	flusher, ok := w.(http.Flusher)
+
+	if !ok {
+		http.Error(w, "SSE not supported", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Add("Content-Type", "text/event-stream")
+	w.Header().Add("Access-Control-Allow-Origin", "*")
+
+	for raw := range eventCh {
+		event, err := formatSSE(raw)
+
+		if err != nil {
+			fmt.Println(err)
+			break 
+		}
+
+		_, err = fmt.Fprint(w, event)
+		if err != nil {
+			fmt.Println(err)
+			break
+		}
+
+		flusher.Flush()
+	}
 }
