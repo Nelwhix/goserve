@@ -1,5 +1,6 @@
 # Serve
-Golang CLI for starting blazing fast server for your local sites
+CLI for starting blazing fast server for your local sites. Perfect for designing Html, css
+templates
 
 ## Usage
 For now, Serve supports just HTML, CSS and Javascript

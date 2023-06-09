@@ -1,5 +1,5 @@
 {
-  "name": "goserve",
+  "name": "@nelwhix/goserve",
   "version": "1.1.2",
   "description": "Golang CLI for starting blazing fast server for your local sites",
   "main": "index.js",
@@ -28,7 +28,7 @@
     "go-npm": "^0.1.9"
   },
   "goBinary": {
-    "name": "serve",
+    "name": "goserve",
     "path": "./bin",
     "url": "https://github.com/nelwhix/goserve/releases/download/v{{version}}/goserve_{{version}}_{{platform}}_{{arch}}.tar.gz"
   }
