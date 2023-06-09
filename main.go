@@ -13,15 +13,18 @@ import (
 
 	"github.com/fatih/color"
 	"github.com/fsnotify/fsnotify"
+	figure "github.com/common-nighthawk/go-figure"
 )
 
 var root *string
 var eventCh = make(chan string)
 
 func main() {
+	ascii := figure.NewFigure("GOSERVE", "basic", true)
+
 	flag.Usage = func () {
 		fmt.Fprintf(flag.CommandLine.Output(), 
-		"Serve - Static file serving and directory listing \n")
+		"%s - Static file serving and directory listing \n", ascii.String())
 		fmt.Fprintf(flag.CommandLine.Output(), "Copyright " + strconv.Itoa(time.Now().Year()) + "\n")
 		fmt.Fprintln(flag.CommandLine.Output(), "Usage Information:")
 		flag.PrintDefaults()

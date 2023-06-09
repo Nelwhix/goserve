@@ -1,5 +1,5 @@
 builds:
-  - binary: serve
+  - binary: goserve
     goos:
       - windows
       - darwin

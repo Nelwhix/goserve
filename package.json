@@ -1,6 +1,6 @@
 {
-  "name": "launch",
-  "version": "1.1.1",
+  "name": "goserve",
+  "version": "1.1.2",
   "description": "Golang CLI for starting blazing fast server for your local sites",
   "main": "index.js",
   "scripts": {
@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Nelwhix/serve.git"
+    "url": "git+https://github.com/Nelwhix/goserve.git"
   },
   "keywords": [
     "cli",
@@ -20,9 +20,9 @@
   "author": "Nelson Isioma",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Nelwhix/serve/issues"
+    "url": "https://github.com/Nelwhix/goserve/issues"
   },
-  "homepage": "https://github.com/nelwhix/serve#readme",
+  "homepage": "https://github.com/nelwhix/goserve#readme",
   "dependencies": {
     "global": "^4.4.0",
     "go-npm": "^0.1.9"
@@ -30,6 +30,6 @@
   "goBinary": {
     "name": "serve",
     "path": "./bin",
-    "url": "https://github.com/nelwhix/serve/releases/download/v{{version}}/serve_{{version}}_{{platform}}_{{arch}}.tar.gz"
+    "url": "https://github.com/nelwhix/goserve/releases/download/v{{version}}/goserve_{{version}}_{{platform}}_{{arch}}.tar.gz"
   }
 }
