@@ -29,7 +29,7 @@
   },
   "goBinary": {
     "name": "goserve",
-    "path": "./bin",
+    "path": "./dist",
     "url": "https://github.com/nelwhix/goserve/releases/download/v{{version}}/goserve_{{version}}_{{platform}}_{{arch}}.tar.gz"
   }
 }
