@@ -16,13 +16,15 @@ goserve -h
 ## Usage
 For now, Serve supports just HTML, CSS and Javascript
 ```bash
-    goserve // this starts a server on port 3000
+    goserve # this starts a server on port 3000
 
-    // To use a custom port run
+    # To use a custom port run
     goserve -p 5173
 
-    // To serve another folder
-    goserve -root "path-to-folder"
+    # To serve another folder
+    goserve -root "/Desktop/my-cool-site/dist"
+
+    # goserve -root "/Desktop/my-cool-site/dist/index.html" won't work because the root flag needs a directory to serve not a file
 ```
 
 For local development, you will need to add this script tag to your html head
