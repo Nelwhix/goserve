@@ -1,6 +1,6 @@
 {
   "name": "@nelwhix/goserve",
-  "version": "1.1.9",
+  "version": "1.1.10",
   "description": "Golang CLI for starting blazing fast server for your local sites",
   "main": "index.js",
   "scripts": {
@@ -24,7 +24,6 @@
   },
   "homepage": "https://github.com/nelwhix/goserve#readme",
   "dependencies": {
-    "global": "^4.4.0",
     "golang-npm": "^0.0.5"
   },
   "goBinary": {
