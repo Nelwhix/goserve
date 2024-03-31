@@ -1,4 +1,4 @@
-package main
+package utils
 
 import (
 	"bytes"
@@ -7,8 +7,8 @@ import (
 	"strings"
 )
 
-func formatSSE(data string) (string, error) {
-	m := map[string]string {
+func FormatSSE(data string) (string, error) {
+	m := map[string]string{
 		"data": data,
 	}
 
@@ -17,7 +17,7 @@ func formatSSE(data string) (string, error) {
 	err := encoder.Encode(m)
 
 	if err != nil {
-		return "", err 
+		return "", err
 	}
 
 	sb := strings.Builder{}

@@ -5,7 +5,6 @@
   "main": "index.js",
   "scripts": {
     "postinstall": "golang-npm install",
-    "preuninstall": "golang-npm uninstall",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
