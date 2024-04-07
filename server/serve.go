@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"fmt"
+	"github.com/Nelwhix/goserve/utils"
 	"github.com/Nelwhix/goserve/watcher"
 	"github.com/gorilla/handlers"
 	"net/http"
@@ -12,10 +13,16 @@ import (
 )
 
 func Serve(port int64, root string, errChan chan error) {
-	go watcher.StartWatcher()
+	eventCh := make(chan string)
+	go watcher.StartWatcher(root, eventCh)
 
 	router := http.NewServeMux()
-	router.HandleFunc("GET /events", streamEvents)
+	router.HandleFunc("GET /events", func(w http.ResponseWriter, r *http.Request) {
+		ctx := context.WithValue(r.Context(), "eventCh", eventCh)
+		r = r.WithContext(ctx)
+
+		streamEvents(w, r)
+	})
 	router.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
 		ctx := context.WithValue(r.Context(), "root", root)
 		r = r.WithContext(ctx)
@@ -58,7 +65,8 @@ func serveFile(w http.ResponseWriter, r *http.Request) {
 }
 
 func streamEvents(w http.ResponseWriter, r *http.Request) {
-	_, ok := w.(http.Flusher)
+	eventCh := r.Context().Value("eventCh").(chan string)
+	flusher, ok := w.(http.Flusher)
 
 	if !ok {
 		http.Error(w, "SSE not supported", http.StatusInternalServerError)
@@ -68,20 +76,21 @@ func streamEvents(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "text/event-stream")
 	w.Header().Add("Access-Control-Allow-Origin", "*")
 
-	//	for raw := range eventCh {
-	//		event, err := utils.FormatSSE(raw)
-	//
-	//		if err != nil {
-	//			fmt.Println(err)
-	//			break
-	//		}
-	//
-	//		_, err = fmt.Fprint(w, event)
-	//		if err != nil {
-	//			fmt.Println(err)
-	//			break
-	//		}
-	//
-	//		flusher.Flush()
-	//	}
+	for raw := range eventCh {
+		fmt.Println("File changed")
+		event, err := utils.FormatSSE(raw)
+
+		if err != nil {
+			fmt.Println(err)
+			break
+		}
+
+		_, err = fmt.Fprint(w, event)
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		flusher.Flush()
+		time.Sleep(5 * time.Second)
+	}
 }

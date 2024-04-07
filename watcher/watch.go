@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-func StartWatcher() {
+func StartWatcher(root string, eventCh chan string) {
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
 		log.Fatal(err)
@@ -33,11 +33,11 @@ func StartWatcher() {
 		}
 	}()
 
-	if *root == "." {
+	if root == "." {
 		wd, _ := os.Getwd()
 		err = watcher.Add(wd)
 	} else {
-		err = watcher.Add(*root)
+		err = watcher.Add(root)
 	}
 
 	if err != nil {
